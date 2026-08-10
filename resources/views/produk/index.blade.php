@@ -6,112 +6,275 @@
 
 @include('layouts.navbar')
 
-<!-- Custom Modern Styling for Produk (Bright Blue / Cyan Theme) -->
+<!-- Font & Icons Import -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-    .page-wrapper {
-        background-color: #f0f7ff;
+    /* Latar belakang dinamis & menyala dengan animasi gradien bergerak */
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: linear-gradient(-45deg, #0284c7, #38bdf8, #6366f1, #06b6d4, #0f172a);
+        background-size: 400% 400%;
+        animation: vibrantGradient 12s ease infinite;
         min-height: 100vh;
-        padding: 2rem 0;
     }
+
+    @keyframes vibrantGradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .page-wrapper {
+        min-height: 100vh;
+        padding: 2.5rem 0 4rem 0;
+    }
+
+    /* Hero Banner Header - Glassmorphic / Menyala */
     .hero-banner-product {
-        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 24px;
         color: #fff;
-        box-shadow: 0 10px 25px rgba(0, 114, 255, 0.25);
-    }
-    .custom-card {
-        border: 1px solid rgba(0, 114, 255, 0.08);
-        border-radius: 20px;
-        box-shadow: 0 8px 20px rgba(0, 114, 255, 0.06);
-        background: #ffffff;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        position: relative;
         overflow: hidden;
     }
-    .search-box {
-        background: #fff;
-        border-radius: 14px;
+
+    .hero-banner-product::before {
+        content: '';
+        position: absolute;
+        top: -40%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        pointer-events: none;
+        filter: blur(30px);
     }
-    .table-custom thead {
-        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+
+    /* Card Container dengan efek Glassmorphism Lembut agar data tetap jelas */
+    .custom-card {
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(12px);
+        overflow: hidden;
+    }
+
+    /* Search Box Input */
+    .search-box-input {
+        border: 1px solid #cbd5e1;
+        border-radius: 12px 0 0 12px;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+    .search-box-input:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+        background-color: #fff;
+    }
+
+    .btn-search-custom {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        border: none;
+        color: white;
+        border-radius: 0 12px 12px 0;
+        padding: 0 1.5rem;
+        font-weight: 600;
+        transition: opacity 0.2s ease;
+    }
+
+    .btn-search-custom:hover {
+        opacity: 0.92;
         color: white;
     }
-    .table-custom thead th {
-        border: none;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-    }
-    .product-img {
-        width: 65px;
-        height: 65px;
-        object-fit: cover;
-        border-radius: 12px;
-        box-shadow: 0 3px 8px rgba(0, 114, 255, 0.15);
-    }
-    .badge-price-buy {
-        background-color: #e0f2fe;
-        color: #0369a1;
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.85rem;
-    }
-    .badge-price-sell {
-        background-color: #dcfce7;
-        color: #15803d;
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.85rem;
-    }
-    .badge-stock {
-        background: #f1f5f9;
-        color: #334155;
-        border: 1px solid #cbd5e1;
-        padding: 5px 12px;
-        border-radius: 50px;
-        font-weight: 600;
-    }
+
+    /* Primary Create Button */
     .btn-create-product {
         background: #ffffff;
-        color: #0072ff;
-        font-weight: bold;
+        color: #0284c7;
+        font-weight: 700;
         border-radius: 50px;
-        transition: all 0.3s ease;
+        padding: 0.65rem 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+
     .btn-create-product:hover {
-        background: #0b2545;
+        background: #0f172a;
         color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
-    .btn-search-custom {
-        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+
+    /* Product Thumbnail Styling */
+    .product-img {
+        width: 52px;
+        height: 52px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+    }
+
+    .product-img-fallback {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background-color: #f1f5f9;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        border: 1px dashed #cbd5e1;
+    }
+
+    /* Badges for Prices & Stock */
+    .badge-price-buy {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1px solid #e2e8f0;
+        display: inline-block;
+    }
+
+    .badge-price-sell {
+        background-color: #f0fdf4;
+        color: #15803d;
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        border: 1px solid #bbf7d0;
+        display: inline-block;
+    }
+
+    .badge-stock {
+        background-color: #f0f9ff;
+        color: #0369a1;
+        border: 1px solid #bae6fd;
+        padding: 0.35rem 0.8rem;
+        border-radius: 50rem;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Action Buttons (Icon-Only Minimalist) */
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
         border: none;
+        text-decoration: none;
+    }
+
+    .btn-detail-soft {
+        background-color: #f0fdf4;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+    }
+
+    .btn-detail-soft:hover {
+        background-color: #16a34a;
         color: white;
+        border-color: #16a34a;
+        transform: translateY(-2px);
     }
-    .btn-search-custom:hover {
-        opacity: 0.9;
+
+    .btn-edit-soft {
+        background-color: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fde68a;
+    }
+
+    .btn-edit-soft:hover {
+        background-color: #f59e0b;
         color: white;
+        border-color: #f59e0b;
+        transform: translateY(-2px);
     }
-    .btn-detail-custom {
-        background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
-        border: none;
-        color: #fff;
-        border-radius: 8px;
-        font-weight: 500;
+
+    .btn-delete-soft {
+        background-color: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
     }
-    .btn-edit-custom {
-        background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
-        border: none;
-        color: #fff;
-        border-radius: 8px;
-        font-weight: 500;
+
+    .btn-delete-soft:hover {
+        background-color: #ef4444;
+        color: white;
+        border-color: #ef4444;
+        transform: translateY(-2px);
     }
-    .btn-delete-custom {
-        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-        border: none;
-        color: #fff;
-        border-radius: 8px;
-        font-weight: 500;
+
+    /* Table Styles */
+    .table-custom {
+        margin-bottom: 0;
+    }
+
+    .table-custom thead th {
+        background-color: rgba(248, 250, 252, 0.85);
+        border-bottom: 1px solid #e2e8f0;
+        color: #475569;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.75px;
+        padding: 1rem 1.25rem;
+    }
+
+    .table-custom tbody td {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 0.925rem;
+    }
+
+    .table-custom tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-custom tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: rgba(241, 245, 249, 0.6);
+    }
+
+    /* Card Footer Pagination */
+    .card-footer-custom {
+        background: transparent;
+        border-top: 1px solid #f1f5f9;
+        padding: 1.25rem 1.5rem;
     }
 </style>
 
@@ -119,61 +282,59 @@
     <div class="container">
         
         <!-- Hero Banner Header -->
-        <div class="hero-banner-product p-4 p-md-5 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div class="hero-banner-product mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
             <div>
-                <span class="badge bg-white text-primary px-3 py-1 rounded-pill fw-bold mb-2 shadow-sm">
+                <span class="badge bg-white text-primary px-3 py-1.5 rounded-pill fw-bold mb-2 shadow-sm fs-7">
                     <i class="bi bi-box-seam-fill me-1"></i> Manajemen Inventaris
                 </span>
-                <h1 class="display-6 fw-bold mb-1 text-white">Halaman Produk</h1>
-                <p class="text-white mb-0 opacity-75">Kelola daftar barang, harga beli, harga jual, dan stok inventaris toko Anda.</p>
+                <h1 class="display-6 fw-bold mb-1 text-white">Daftar Produk</h1>
+                <p class="text-white mb-0 opacity-90">Kelola informasi barang, harga beli, harga jual, dan stok toko secara efisien</p>
             </div>
-            <div class="mt-3 mt-md-0">
+            <div>
                 @can('create', App\Models\Produk::class)
-                <a href="{{ route('produk.create') }}" class="btn btn-create-product btn-lg shadow-sm px-4">
-                    <i class="bi bi-plus-circle-fill me-1"></i> Tambah Produk
+                <a href="{{ route('produk.create') }}" class="btn btn-create-product shadow-sm d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-plus-circle-fill fs-5"></i>
+                    <span>Tambah Produk Baru</span>
                 </a>
                 @endcan
             </div>
         </div>
 
-        {{-- ========================================== --}}
         {{-- ALERT SECTION --}}
-        {{-- ========================================== --}}
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4 border-0" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+            <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4 border-0 rounded-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2 fs-5 align-middle"></i> {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
         @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4 border-0" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4 border-0 rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5 align-middle"></i> {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        {{-- ========================================== --}}
 
         <!-- Search Bar Card -->
-        <div class="card custom-card p-3 mb-4 search-box">
+        <div class="card custom-card p-3 mb-4">
             <form action="{{ route('produk.index') }}" method="GET">
                 <div class="input-group">
-                    <span class="input-group-text bg-white border-0 text-primary ps-3">
+                    <span class="input-group-text bg-light border-end-0 rounded-start-3 text-muted ps-3">
                         <i class="bi bi-search"></i>
                     </span>
                     <input 
                         type="text"
                         name="search"
                         value="{{ request('search') }}"
-                        class="form-control border-0 bg-white py-2 px-2"
-                        placeholder="Cari nama produk..."
+                        class="form-control bg-light border-start-0 search-box-input"
+                        placeholder="Cari berdasarkan nama produk..."
                     >
-                    <button class="btn btn-search-custom px-4 fw-semibold" type="submit">
-                        Cari
+                    <button class="btn btn-search-custom d-flex align-items-center gap-2" type="submit">
+                        <span>Cari</span>
                     </button>
                     @if(request('search'))
-                        <a href="{{ route('produk.index') }}" class="btn btn-secondary px-3">
-                            Reset
+                        <a href="{{ route('produk.index') }}" class="btn btn-outline-secondary px-3 ms-2 rounded-3 d-flex align-items-center gap-1">
+                            <i class="bi bi-x-circle"></i> Reset
                         </a>
                     @endif
                 </div>
@@ -183,82 +344,110 @@
         <!-- Table Card -->
         <div class="card custom-card">
             <div class="table-responsive">
-                <table class="table table-custom table-hover align-middle mb-0">
+                <table class="table table-custom align-middle">
                     <thead>
                         <tr>
-                            <th scope="col" class="ps-4 py-3">#</th>
-                            <th scope="col" class="py-3">User</th>
-                            <th scope="col" class="py-3">Foto</th>
-                            <th scope="col" class="py-3">Nama</th>
-                            <th scope="col" class="py-3">Harga Beli</th>
-                            <th scope="col" class="py-3">Harga Jual</th>
-                            <th scope="col" class="py-3">Stok</th>
-                            <th scope="col" class="py-3 text-center">Aksi</th>
+                            <th scope="col" class="ps-4" style="width: 4%;">#</th>
+                            <th scope="col" style="width: 8%;">Foto</th>
+                            <th scope="col" style="width: 25%;">Nama Produk</th>
+                            <th scope="col" style="width: 15%;">Penanggung Jawab</th>
+                            <th scope="col" style="width: 15%;">Harga Beli</th>
+                            <th scope="col" style="width: 15%;">Harga Jual</th>
+                            <th scope="col" style="width: 8%;">Stok</th>
+                            <th scope="col" class="text-end pe-4" style="width: 10%;">Aksi</th>
                         </tr>
                     </thead>
-                   <tbody>
-    @forelse ($products as $product)
-    <tr>
-        <th scope="row" class="ps-4 fw-bold text-muted">{{ $products->firstItem() + $loop->index }}</th>
-        <td>
-            <span class="fw-semibold text-dark"><i class="bi bi-person-circle me-1 text-primary"></i> {{ $product->user->name }}</span>
-        </td>
-        <td>
-            <img src="{{ asset('storage/'.$product->foto) }}" class="product-img" alt="{{ $product->nama }}">
-        </td>
-        <td>
-            <span class="fw-bold text-dark fs-6">{{ $product->nama }}</span>
-        </td>
-        <td>
-            <span class="badge-price-buy">Rp {{ number_format($product->harga_beli, 0, ',', '.') }}</span>
-        </td>
-        <td>
-            <span class="badge-price-sell">Rp {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
-        </td>
-        <td>
-            <span class="badge-stock">{{ $product->stok }} pcs</span>
-        </td>
-        <td class="text-center">
-            <div class="d-inline-flex gap-1 justify-content-center">
-                <a href="{{ route('produk.show', $product) }}" class="btn btn-detail-custom btn-sm px-3">
-                    <i class="bi bi-eye me-1"></i> Rincian
-                </a>
-                
-                @can('update', $product)
-                <a href="{{ route('produk.edit', $product) }}" class="btn btn-edit-custom btn-sm px-3">
-                    <i class="bi bi-pencil me-1"></i> Edit
-                </a>
-                @endcan
-                
-                @can('delete', $product)
-                <form action="{{ route('produk.destroy', $product) }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-delete-custom btn-sm px-3" onclick="return confirm('Apakah anda yakin akan menghapus produk ini?')">
-                        <i class="bi bi-trash me-1"></i> Hapus
-                    </button>
-                </form>
-                @endcan
-            </div>
-        </td>
-    </tr>
-    @empty
-    <tr>
-        <td colspan="8" class="text-center py-5">
-            <div class="text-muted fs-5">Data tidak tersedia.</div>
-        </td>
-    </tr>
-    @endforelse
-</tbody>
+                    <tbody>
+                        @forelse ($products as $product)
+                        <tr>
+                            <td class="ps-4 fw-semibold text-muted">{{ $products->firstItem() + $loop->index }}</td>
+                            <td>
+                                @if($product->foto && file_exists(public_path('storage/'.$product->foto)))
+                                    <img src="{{ asset('storage/'.$product->foto) }}" class="product-img" alt="{{ $product->nama }}">
+                                @else
+                                    <div class="product-img-fallback">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark d-block mb-0">{{ $product->nama }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted small fw-medium d-flex align-items-center gap-1">
+                                    <i class="bi bi-person-circle text-secondary"></i> {{ $product->user->name ?? 'System' }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge-price-buy">Rp {{ number_format($product->harga_beli, 0, ',', '.') }}</span>
+                            </td>
+                            <td>
+                                <span class="badge-price-sell">Rp {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
+                            </td>
+                            <td>
+                                <span class="badge-stock">
+                                    <i class="bi bi-box"></i> {{ $product->stok }}
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1.5">
+                                    <!-- Detail Button -->
+                                    <a href="{{ route('produk.show', $product) }}" 
+                                       class="btn-action btn-detail-soft" 
+                                       data-bs-toggle="tooltip" 
+                                       title="Lihat Rincian">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    
+                                    <!-- Edit Button -->
+                                    @can('update', $product)
+                                    <a href="{{ route('produk.edit', $product) }}" 
+                                       class="btn-action btn-edit-soft" 
+                                       data-bs-toggle="tooltip" 
+                                       title="Edit Produk">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    @endcan
+                                    
+                                    <!-- Delete Button -->
+                                    @can('delete', $product)
+                                    <form action="{{ route('produk.destroy', $product) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn-action btn-delete-soft" 
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')"
+                                                data-bs-toggle="tooltip" 
+                                                title="Hapus Produk">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <div class="py-3">
+                                    <i class="bi bi-box-seam fs-1 text-secondary opacity-50 d-block mb-2"></i>
+                                    <p class="fw-semibold mb-1">Tidak ada produk ditemukan</p>
+                                    <small class="text-muted">Gunakan kata kunci lain atau tambahkan produk baru.</small>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
                 </table>
             </div>
 
             <!-- Pagination Footer -->
-            <div class="card-footer bg-white border-0 py-4 px-4">
+            @if($products->hasPages())
+            <div class="card-footer-custom">
                 <div class="d-flex justify-content-center justify-content-md-end">
                     {{ $products->withQueryString()->links() }}
                 </div>
             </div>
+            @endif
         </div>
 
     </div>
