@@ -8,19 +8,18 @@ use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Usercontroller;
 
-
-
-//route yang bisa diakses ketika user login
-    Route::middleware('guest')->group(function () {
+// Route yang bisa diakses ketika user BELUM login (Guest)
+Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/auth', [AuthController::class, 'auth'])->name('auth');
 });
 
-//route yang bisa diakses ketika user sudah login
+// Route yang bisa diakses ketika user SUDAH login (Authenticated)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Route khusus Admin
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [Usercontroller::class, 'index'])->name('users');
         Route::get('/users/create', [Usercontroller::class, 'create'])->name('users.create');
@@ -28,14 +27,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/edit/{user}', [Usercontroller::class, 'edit'])->name('users.edit');
         Route::put('/users/update/{user}', [Usercontroller::class, 'update'])->name('users.update');
         Route::delete('/users/destroy/{user}', [Usercontroller::class, 'destroy'])->name('users.destroy');
-          
     });
+
+    // Route untuk Admin & Kasir
     Route::middleware('role:admin,kasir')->group(function () {
-        Route::resource('/produk' , ProdukController::class);
+        Route::resource('/produk', ProdukController::class);
         Route::resource('/penjualan', PenjualanController::class);
         Route::resource('/itempenjualan', ItemPenjualanController::class);
         Route::get('/admin/penjualan/{penjualan}', [PenjualanController::class, 'show'])
-        ->name('admin.penjualan.show');
+            ->name('admin.penjualan.show');
+            
+        // Route untuk Halaman Tentang (About)
+        Route::view('/about', 'about')->name('about');
     });
-
 });

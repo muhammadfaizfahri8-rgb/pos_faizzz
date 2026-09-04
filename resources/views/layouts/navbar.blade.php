@@ -202,6 +202,9 @@
             <li class="nav-item">
               <a class="nav-link {{ Request::is('penjualan*') ? 'active' : '' }}" href="{{ route('penjualan.index') }}">Penjualan</a>
             </li>
+            <li class="nav-item">
+          <a class="nav-link {{ Request::is('about*') ? 'active' : '' }}" href="{{ route('about') }}">Tentang</a>
+        </li>
           </ul>
 
           <!-- Tombol Logout -->
