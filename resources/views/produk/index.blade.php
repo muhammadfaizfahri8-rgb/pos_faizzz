@@ -362,7 +362,7 @@
                         <tr>
                             <td class="ps-4 fw-semibold text-muted">{{ $products->firstItem() + $loop->index }}</td>
                             <td>
-                                @if($product->foto && file_exists(public_path('storage/'.$product->foto)))
+                                @if($product->foto && Storage::disk('public')->exists($product->foto))
                                     <img src="{{ asset('storage/'.$product->foto) }}" class="product-img" alt="{{ $product->nama }}">
                                 @else
                                     <div class="product-img-fallback">
