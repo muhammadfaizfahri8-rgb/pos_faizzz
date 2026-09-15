@@ -65,12 +65,44 @@
         font-weight: 700;
         color: #1e293b;
     }
+
+    /* Style Khusus Tampilan Struk Kasir (Sembunyi di Layar Display) */
+    #receipt-print {
+        display: none;
+    }
+
+    /* Style ketika Tombol Print Ditekan */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #receipt-print, #receipt-print * {
+            visibility: visible;
+        }
+        #receipt-print {
+            display: block !important;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 80mm; /* Ukuran standar kertas printer kasir thermal */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            color: #000;
+            padding: 5px;
+        }
+        .text-center-print { text-align: center; }
+        .text-end-print { text-align: right; }
+        .line-print { border-top: 1px dashed #000; margin: 6px 0; }
+        .table-print { width: 100%; border-collapse: collapse; }
+        .table-print td, .table-print th { font-size: 11px; vertical-align: top; }
+        @page { size: auto; margin: 0; }
+    }
 </style>
 
 <div class="page-wrapper">
     <div class="container">
         
-        <!-- Hero Banner -->
+        <!-- Hero Banner (Tanpa Tombol) -->
         <div class="hero-banner-sales p-4 p-md-5 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
             <div>
                 <span class="badge bg-white text-primary px-3 py-1 rounded-pill fw-bold mb-2 shadow-sm">
@@ -78,11 +110,6 @@
                 </span>
                 <h1 class="display-6 fw-bold mb-1 text-white">Rincian Penjualan</h1>
                 <p class="text-white mb-0 opacity-75">Informasi lengkap transaksi dan daftar item produk yang dibeli.</p>
-            </div>
-            <div class="mt-3 mt-md-0">
-                <a href="{{ route('penjualan.index') }}" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm text-primary">
-                    <i class="bi bi-arrow-left me-1"></i> Kembali
-                </a>
             </div>
         </div>
 
@@ -115,7 +142,10 @@
                 <div class="col-6 col-md-3 text-md-end">
                     <div class="info-label">Total Pembayaran</div>
                     <div class="mt-1">
-                        <span class="badge-total">Rp {{ number_format($sale->total_pembayaran ?? 0, 0, ',', '.') }}</span>
+                        <span class="badge-total">
+                            Rp {{ number_format($sale->total_pembayaran ?? 0, 0, ',', '.') }}
+                            ({{ $sale->metode_pembayaran ?? 'Cash' }})
+                        </span>
                     </div>
                 </div>
             </div>
@@ -175,14 +205,65 @@
                 </table>
             </div>
 
-            <!-- Card Footer dengan Tombol Kembali -->
-            <div class="card-footer bg-white border-0 py-4 px-4 text-end">
+            <!-- Card Footer (Tombol Cetak Struk & Kembali Hanya Ada di Sini) -->
+            <div class="card-footer bg-white border-0 py-4 px-4 text-end d-flex justify-content-end gap-2">
+                <button onclick="window.print()" class="btn btn-warning rounded-pill px-4 fw-semibold">
+                    <i class="bi bi-printer me-1"></i> Cetak Struk
+                </button>
                 <a href="{{ route('penjualan.index') }}" class="btn rounded-pill px-4 fw-semibold text-white" style="background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);">
                     Kembali ke Daftar Penjualan
                 </a>
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- ================= STRUK PENJUALAN (KHUSUS UNTUK PRINT) ================= -->
+<div id="receipt-print">
+    <div class="text-center-print">
+        <h3 style="margin: 0; font-size: 16px;">TOKO KAMI</h3>
+        <p style="margin: 2px 0;">Jl. Contoh Raya No. 123</p>
+        <p style="margin: 2px 0;">Telp: 0812-3456-7890</p>
+    </div>
+    
+    <div class="line-print"></div>
+    
+    <div>
+        <div>No. Trx : #{{ $sale->id ?? '-' }}</div>
+        <div>Tgl     : {{ $sale->created_at ? $sale->created_at->format('d/m/Y H:i') : '-' }}</div>
+        <div>Kasir   : {{ $sale->user->name ?? '-' }}</div>
+        <div>Bayar   : {{ $sale->metode_pembayaran ?? 'Cash' }}</div>
+    </div>
+    
+    <div class="line-print"></div>
+    
+    <table class="table-print">
+        @foreach($sale->itemPenjualan ?? [] as $item)
+        <tr>
+            <td colspan="3"><strong>{{ $item->produk->nama ?? 'Produk' }}</strong></td>
+        </tr>
+        <tr>
+            <td>{{ $item->kuantitas ?? 1 }} x {{ number_format($item->produk->harga_jual ?? 0, 0, ',', '.') }}</td>
+            <td class="text-end-print">Rp {{ number_format($item->subtotal ?? 0, 0, ',', '.') }}</td>
+        </tr>
+        @endforeach
+    </table>
+    
+    <div class="line-print"></div>
+    
+    <table class="table-print">
+        <tr>
+            <td><strong>TOTAL ({{ $sale->metode_pembayaran ?? 'Cash' }})</strong></td>
+            <td class="text-end-print"><strong>Rp {{ number_format($sale->total_pembayaran ?? 0, 0, ',', '.') }}</strong></td>
+        </tr>
+    </table>
+    
+    <div class="line-print"></div>
+    
+    <div class="text-center-print" style="margin-top: 10px;">
+        <p style="margin: 2px 0;">-- Terima Kasih --</p>
+        <p style="margin: 2px 0;">Selamat Belanja Kembali</p>
     </div>
 </div>
 

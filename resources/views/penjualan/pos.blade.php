@@ -270,16 +270,33 @@
                         @if(isset($sale))
                         <form method="POST" 
                               action="{{ route('penjualan.update', $sale->id) }}"
-                              onsubmit="return confirm('Yakin ingin memproses checkout transaksi ini?')">
+                              onsubmit="return validasiCheckout()">
                             @csrf
                             @method('PUT')
                             
                             <div class="mb-3">
-                                <select name="payment_method" class="form-select rounded-pill px-3 py-2 bg-white" required>
+                                <select name="payment_method" id="payment_method" class="form-select rounded-pill px-3 py-2 bg-white" required onchange="toggleCashInput()">
                                     <option value="">-- Pilih Metode Pembayaran --</option>
                                     <option value="CASH">Cash (Tunai)</option>
                                     <option value="QRIS">QRIS / Non-Tunai</option>
                                 </select>
+                            </div>
+
+                            <!-- Section Uang Dibayar & Kembalian (Muncul jika pilih CASH) -->
+                            <div id="cash-section" class="mb-3 p-3 bg-white rounded-3 border shadow-sm" style="display: none;">
+                                <div class="mb-2">
+                                    <label for="paid_amount" class="form-label small fw-bold text-muted mb-1">Uang Dibayar (Rp)</label>
+                                    <input type="number" 
+                                           id="paid_amount" 
+                                           name="paid_amount" 
+                                           class="form-control rounded-pill px-3" 
+                                           placeholder="Masukkan nominal uang..."
+                                           oninput="hitungKembalian()">
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                                    <span class="small fw-semibold text-muted">Kembalian:</span>
+                                    <span id="change-amount" class="fw-bold text-dark fs-6">Rp 0</span>
+                                </div>
                             </div>
 
                             <button class="btn btn-checkout w-100 {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}">
@@ -291,7 +308,7 @@
                         @can('delete', $sale)
                         <form action="{{ route('penjualan.destroy', $sale->id) }}"
                               method="POST"
-                              onsubmit="return confirm('Yakin ingin membatalkan transaksi me ini?')"
+                              onsubmit="return confirm('Yakin ingin membatalkan transaksi ini?')"
                               class="mt-2">
                             @csrf
                             @method('DELETE')
@@ -308,5 +325,56 @@
         </div>
     </div>
 </div>
+
+<!-- Script Logika Cash & Perhitungan Kembalian -->
+<script>
+    const totalPembayaran = {{ $sale->total_pembayaran ?? 0 }};
+
+    function toggleCashInput() {
+        const method = document.getElementById('payment_method').value;
+        const cashSection = document.getElementById('cash-section');
+        const paidInput = document.getElementById('paid_amount');
+
+        if (method === 'CASH') {
+            cashSection.style.display = 'block';
+            paidInput.setAttribute('required', 'required');
+            paidInput.focus();
+        } else {
+            cashSection.style.display = 'none';
+            paidInput.removeAttribute('required');
+            paidInput.value = '';
+            hitungKembalian();
+        }
+    }
+
+    function hitungKembalian() {
+        const paidAmount = parseFloat(document.getElementById('paid_amount').value) || 0;
+        const changeElement = document.getElementById('change-amount');
+        const kembalian = paidAmount - totalPembayaran;
+
+        if (paidAmount === 0) {
+            changeElement.innerText = 'Rp 0';
+            changeElement.className = 'fw-bold text-dark fs-6';
+        } else if (kembalian >= 0) {
+            changeElement.innerText = 'Rp ' + kembalian.toLocaleString('id-ID');
+            changeElement.className = 'fw-bold text-success fs-6';
+        } else {
+            changeElement.innerText = 'Kurang Rp ' + Math.abs(kembalian).toLocaleString('id-ID');
+            changeElement.className = 'fw-bold text-danger fs-6';
+        }
+    }
+
+    function validasiCheckout() {
+        const method = document.getElementById('payment_method').value;
+        const paidAmount = parseFloat(document.getElementById('paid_amount').value) || 0;
+
+        if (method === 'CASH' && paidAmount < totalPembayaran) {
+            alert('Uang pembayaran masih kurang!');
+            return false;
+        }
+
+        return confirm('Yakin ingin memproses checkout transaksi ini?');
+    }
+</script>
 
 @endsection
