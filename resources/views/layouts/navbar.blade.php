@@ -179,9 +179,9 @@
     <!-- Navbar POS Toko Bunga -->
     <nav class="navbar navbar-expand-lg navbar-custom">
       <div class="container-fluid px-4">
-        <a class="navbar-brand" href="#">
-          <span>⚡</span> Blossom POS
-        </a>
+<a href="{{ route('profile') }}" class="btn-profile">
+    <span>👟</span> Profil Blossom Shoes
+</a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
