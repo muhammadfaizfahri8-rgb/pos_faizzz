@@ -43,5 +43,8 @@ Route::middleware('auth')->group(function () {
 
         // Route untuk Halaman Profile Perusahaan (Blossom Shoes)
         Route::view('/profile', 'profile')->name('profile');
+
+        // Route untuk Halaman QnA (Baru)
+        Route::view('/qna', 'qna')->name('qna');
     });
 });

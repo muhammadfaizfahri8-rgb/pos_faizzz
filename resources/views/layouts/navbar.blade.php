@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi POS - Toko Bunga</title>
+    <title>Rekap Penjualan - Blossom Shoes</title>
     <!-- CSS Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -29,7 +29,6 @@
         /* 2. BODY DENGAN BACKGROUND 3D VIBRANT BERGANTI WARNA */
         body {
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            /* Gradient Vibrant (Vivid Blue -> Royal Purple -> Cyan -> Deep Indigo) */
             background: linear-gradient(-45deg, #00d2ff, #3a7bd5, #6a11cb, #2575fc, #00c6ff);
             background-size: 400% 400%;
             animation: dynamicGradient 14s ease infinite;
@@ -82,11 +81,12 @@
             padding-bottom: 12px;
         }
 
-        .navbar-custom .navbar-brand {
+        .btn-profile {
             color: #ffffff !important;
             font-weight: 800;
             letter-spacing: 0.5px;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
+            text-decoration: none;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -96,9 +96,9 @@
         .navbar-custom .navbar-nav .nav-link {
             color: rgba(255, 255, 255, 0.9) !important;
             transition: all 0.3s ease;
-            border-radius: 12px;
-            padding: 8px 16px;
-            margin: 0 4px;
+            border-radius: 20px;
+            padding: 8px 18px;
+            margin: 0 3px;
             font-weight: 600;
             font-size: 0.95rem;
         }
@@ -106,20 +106,10 @@
         .navbar-custom .navbar-nav .nav-link:hover,
         .navbar-custom .navbar-nav .nav-link.active {
             color: #ffffff !important;
-            background-color: rgba(255, 255, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.35);
             backdrop-filter: blur(8px);
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .navbar-custom .navbar-toggler {
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-            padding: 6px 10px;
-        }
-
-        .navbar-custom .navbar-toggler-icon {
-            filter: brightness(0) invert(1);
         }
 
         .navbar-custom .btn-logout {
@@ -147,41 +137,62 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 24px;
             color: #fff;
-            padding: 3rem 2rem;
+            padding: 2rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15),
                         inset 0 1px 1px rgba(255, 255, 255, 0.5);
-            margin-bottom: 2.5rem;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 2rem;
         }
 
-        /* 5. KARTU & PANEL KONTEN KACA 3D (EFEK MELAYANG) */
+        /* 5. KARTU & PANEL KONTEN KACA 3D */
         .custom-card, .table-card {
-            background: rgba(255, 255, 255, 0.88) !important;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.92) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 
-                        0 5px 15px rgba(0, 0, 0, 0.04);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            padding: 25px;
         }
 
-        .custom-card:hover {
-            transform: translateY(-6px) scale(1.01);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-            background: rgba(255, 255, 255, 0.95) !important;
+        /* STYLING PRINT (Hanya elemen laporan yang dicetak) */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            body::before, body::after, .navbar-custom, .print-hide {
+                display: none !important;
+            }
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .custom-card {
+                background: white !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+            .dashboard-header {
+                background: none !important;
+                color: black !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 10px 0 !important;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navbar POS Toko Bunga -->
+    <!-- Navbar POS Toko Sepatu -->
     <nav class="navbar navbar-expand-lg navbar-custom">
       <div class="container-fluid px-4">
-<a href="{{ route('profile') }}" class="btn-profile">
-    <span>👟</span> Profil Blossom Shoes
-</a>
+        <a href="{{ route('profile') }}" class="btn-profile">
+            <span>👟</span> Profil Blossom Shoes
+        </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -191,7 +202,7 @@
           <!-- Menu Utama -->
           <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
             <li class="nav-item">
-              <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" aria-current="page" href="{{ route('dashboard') }}">Halaman utama</a>
+              <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Halaman utama</a>
             </li>
             <li class="nav-item">
               <a class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}" href="{{ route('admin.users') }}">Akun</a>
@@ -203,8 +214,12 @@
               <a class="nav-link {{ Request::is('penjualan*') ? 'active' : '' }}" href="{{ route('penjualan.index') }}">Penjualan</a>
             </li>
             <li class="nav-item">
-          <a class="nav-link {{ Request::is('about*') ? 'active' : '' }}" href="{{ route('about') }}">Tentang</a>
-        </li>
+              <a class="nav-link {{ Request::is('about*') ? 'active' : '' }}" href="{{ route('about') }}">Tentang</a>
+            </li>
+            <!-- Menu Baru QnA -->
+            <li class="nav-item">
+              <a class="nav-link {{ Request::is('qna*') ? 'active' : '' }}" href="{{ url('/qna') }}">QnA</a>
+            </li>
           </ul>
 
           <!-- Tombol Logout -->
@@ -219,7 +234,161 @@
       </div>
     </nav>
 
-    <!-- Script Bootstrap -->
+    <!-- Konten Utama Rekap Penjualan -->
+    <div class="container my-4">
+        
+        <!-- Header Banner -->
+        <div class="dashboard-header text-center">
+            <h2 class="fw-bold mb-1"><i class="bi bi-journal-bookmark-fill me-2"></i>Rekap Penjualan</h2>
+            <p class="mb-0 text-white-50" id="periodeJudul">Laporan Penjualan Blossom Shoes</p>
+        </div>
+
+        <!-- Filter & Card Penjualan -->
+        <div class="custom-card">
+            
+            <!-- Controls (Di-hide saat cetak) -->
+            <div class="row g-3 align-items-center mb-4 print-hide">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Tipe Rekap:</label>
+                    <select id="jenisRekap" class="form-select" onchange="toggleFilterInput()">
+                        <option value="semua">Semua Data</option>
+                        <option value="harian">Harian</option>
+                        <option value="bulanan">Bulanan</option>
+                        <option value="tahunan">Tahunan</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Pilih Periode:</label>
+                    <input type="date" id="inputTanggal" class="form-control" style="display:none;">
+                    <input type="month" id="inputBulan" class="form-control" style="display:none;">
+                    <input type="number" id="inputTahun" class="form-control" placeholder="Contoh: 2026" min="2000" max="2100" style="display:none;">
+                    <input type="text" id="inputSemua" class="form-control" value="Menampilkan Semua Data" disabled>
+                </div>
+
+                <div class="col-md-5 d-flex align-items-end gap-2 mt-auto">
+                    <button class="btn btn-primary fw-bold w-100" onclick="filterData()">
+                        <i class="bi bi-filter me-1"></i> Tampilkan
+                    </button>
+                    <button class="btn btn-success fw-bold w-100" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i> Print Laporan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Data Rekap -->
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle border">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th style="width: 130px;">Tanggal</th>
+                            <th>Nama Produk</th>
+                            <th style="width: 100px;">Jumlah</th>
+                            <th style="width: 160px;">Harga Satuan</th>
+                            <th style="width: 180px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelBody">
+                        <!-- Data otomatis diisi JavaScript -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-secondary fw-bold fs-6">
+                            <td colspan="5" class="text-end">Grand Total:</td>
+                            <td id="grandTotal" class="text-end text-primary">Rp 0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script Bootstrap & Logic Rekap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Data Sampel Transaksi Penjualan Blossom Shoes
+        const dataPenjualan = [
+            { tanggal: "2026-03-01", produk: "Sepatu Sneaker Blossom White", jumlah: 2, harga: 350000 },
+            { tanggal: "2026-03-01", produk: "Sepatu Running Sport", jumlah: 1, harga: 450000 },
+            { tanggal: "2026-03-02", produk: "Flat Shoes Floral", jumlah: 3, harga: 180000 },
+            { tanggal: "2026-03-15", produk: "Heels Classic Rose", jumlah: 1, harga: 500000 },
+            { tanggal: "2026-04-05", produk: "Sepatu Casual Canvas", jumlah: 2, harga: 250000 },
+            { tanggal: "2025-12-20", produk: "Boots Leather Edition", jumlah: 1, harga: 750000 }
+        ];
+
+        // Format angka ke format Rupiah (Rp)
+        function formatRupiah(angka) {
+            return "Rp " + angka.toLocaleString("id-ID");
+        }
+
+        // Mengatur jenis input tanggal yang muncul
+        function toggleFilterInput() {
+            const jenis = document.getElementById("jenisRekap").value;
+            document.getElementById("inputTanggal").style.display = (jenis === "harian") ? "block" : "none";
+            document.getElementById("inputBulan").style.display = (jenis === "bulanan") ? "block" : "none";
+            document.getElementById("inputTahun").style.display = (jenis === "tahunan") ? "block" : "none";
+            document.getElementById("inputSemua").style.display = (jenis === "semua") ? "block" : "none";
+        }
+
+        // Proses Filter & Menampilkan ke Tabel
+        function filterData() {
+            const jenis = document.getElementById("jenisRekap").value;
+            const tbody = document.getElementById("tabelBody");
+            const periodeJudul = document.getElementById("periodeJudul");
+            
+            tbody.innerHTML = "";
+            let totalKeseluruhan = 0;
+            let filteredData = [];
+
+            if (jenis === "harian") {
+                const val = document.getElementById("inputTanggal").value;
+                if (!val) return alert("Pilih tanggal terlebih dahulu!");
+                filteredData = dataPenjualan.filter(item => item.tanggal === val);
+                periodeJudul.innerText = `Laporan Penjualan Harian (${val})`;
+            } else if (jenis === "bulanan") {
+                const val = document.getElementById("inputBulan").value;
+                if (!val) return alert("Pilih bulan dan tahun terlebih dahulu!");
+                filteredData = dataPenjualan.filter(item => item.tanggal.startsWith(val));
+                periodeJudul.innerText = `Laporan Penjualan Bulanan (${val})`;
+            } else if (jenis === "tahunan") {
+                const val = document.getElementById("inputTahun").value;
+                if (!val) return alert("Masukkan tahun terlebih dahulu!");
+                filteredData = dataPenjualan.filter(item => item.tanggal.startsWith(val));
+                periodeJudul.innerText = `Laporan Penjualan Tahunan (${val})`;
+            } else {
+                filteredData = dataPenjualan;
+                periodeJudul.innerText = "Laporan Penjualan Semua Periode";
+            }
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Tidak ada data transaksi pada periode ini.</td></tr>`;
+                document.getElementById("grandTotal").innerText = formatRupiah(0);
+                return;
+            }
+
+            filteredData.forEach((item, index) => {
+                const total = item.jumlah * item.harga;
+                totalKeseluruhan += total;
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td class="text-center">${item.tanggal}</td>
+                    <td>${item.produk}</td>
+                    <td class="text-center">${item.jumlah}</td>
+                    <td class="text-end">${formatRupiah(item.harga)}</td>
+                    <td class="text-end fw-bold">${formatRupiah(total)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById("grandTotal").innerText = formatRupiah(totalKeseluruhan);
+        }
+
+        // Jalankan fungsi awal saat halaman dibuka
+        filterData();
+    </script>
 </body>
 </html>

@@ -112,10 +112,10 @@
         <div class="hero-banner-pos p-4 p-md-4 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
             <div>
                 <span class="badge bg-white text-primary px-3 py-1 rounded-pill fw-bold mb-2 shadow-sm">
-                    ⚡ Kasir Point of Sale
+                    ⚡ Kasir Point of Sale (Sepatu)
                 </span>
                 <h1 class="h3 fw-bold mb-1 text-white">Transaksi Penjualan Baru</h1>
-                <p class="text-white mb-0 opacity-75 small fw-semibold">Pilih produk di sebelah kiri dan kelola keranjang belanja di sebelah kanan.</p>
+                <p class="text-white mb-0 opacity-75 small fw-semibold">Pilih produk, ukuran size sepatu, dan kelola keranjang belanja.</p>
             </div>
             <div class="mt-3 mt-md-0">
                 <a href="{{ route('penjualan.index') }}" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm text-primary">
@@ -130,7 +130,14 @@
             <div class="col-md-6">
                 <div class="card custom-card h-100">
                     <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
-                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-grid-fill text-primary me-2"></i> Katalog Produk</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-grid-fill text-primary me-2"></i> Katalog Produk</h5>
+                            <!-- Tombol Panduan Size Chart -->
+                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill fw-semibold" data-bs-toggle="modal" data-bs-target="#sizeChartModal">
+                                <i class="bi bi-ruler me-1"></i> Size Chart
+                            </button>
+                        </div>
+
                         <!-- Form Pencarian -->
                         <form method="GET" action="{{ route('penjualan.create') }}">
                             <div class="input-group">
@@ -155,8 +162,8 @@
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
                                 <div class="row align-items-center g-2">
-                                    <!-- Detail Produk & Tombol Pilih -->
-                                    <div class="col-7">
+                                    <!-- Detail Produk -->
+                                    <div class="col-12 col-sm-5">
                                         <div class="d-flex align-items-center gap-2">
                                             @if($product->foto)
                                                 <img src="{{ asset('storage/' . $product->foto) }}" class="product-img" alt="Foto">
@@ -172,14 +179,28 @@
                                         </div>
                                     </div>
 
+                                    <!-- Pilih Size Sepatu -->
+                                    <div class="col-5 col-sm-3">
+                                        <select name="size" class="form-select form-select-sm text-center" required>
+                                            <option value="">Size</option>
+                                            <option value="38">38</option>
+                                            <option value="39">39</option>
+                                            <option value="40">40</option>
+                                            <option value="41">41</option>
+                                            <option value="42">42</option>
+                                            <option value="43">43</option>
+                                            <option value="44">44</option>
+                                        </select>
+                                    </div>
+
                                     <!-- Input Qty -->
-                                    <div class="col-3">
+                                    <div class="col-4 col-sm-2">
                                         <input type="number" name="quantity" value="1" min="1"
                                                class="form-control form-control-sm text-center {{ isset($sale) && $sale->status === 'COMPLETED' ? 'readonly' : '' }}">
                                     </div>
 
                                     <!-- Tombol Tambah (+) -->
-                                    <div class="col-2">
+                                    <div class="col-3 col-sm-2">
                                         <button class="btn btn-add-product btn-sm w-100 fw-bold {{ isset($sale) && $sale->status === 'COMPLETED' ? 'disabled' : '' }}" title="Tambah ke Keranjang">
                                             <i class="bi bi-plus-lg"></i>
                                         </button>
@@ -210,7 +231,7 @@
                                 <table class="table table-cart align-middle mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="ps-4">Produk</th>
+                                            <th class="ps-4">Produk / Size</th>
                                             <th>Harga</th>
                                             <th style="width: 90px;">Qty</th>
                                             <th>Subtotal</th>
@@ -221,12 +242,14 @@
                                         @forelse($sale->itemPenjualan ?? [] as $item)
                                         <tr>
                                             <td class="ps-4">
-                                                <span class="fw-semibold text-dark small">{{ $item->produk->nama ?? '-' }}</span>
+                                                <span class="fw-semibold text-dark small d-block">{{ $item->produk->nama ?? '-' }}</span>
+                                                <span class="badge bg-secondary text-white" style="font-size: 0.7rem;">Size: {{ $item->size ?? '-' }}</span>
                                             </td>
                                             <td class="small text-muted">Rp {{ number_format($item->produk->harga_jual ?? 0, 0, ',', '.') }}</td>
                                             <td>
                                                 <form method="POST" action="{{ route('itempenjualan.update', $item->id) }}">
                                                     @csrf @method('PUT')
+                                                    <input type="hidden" name="size" value="{{ $item->size }}">
                                                     <input type="number" name="quantity"
                                                            value="{{ $item->kuantitas }}"
                                                            class="form-control form-control-sm text-center"
@@ -275,7 +298,7 @@
                             @method('PUT')
                             
                             <div class="mb-3">
-                                <select name="payment_method" id="payment_method" class="form-select rounded-pill px-3 py-2 bg-white" required onchange="toggleCashInput()">
+                                <select name="payment_method" id="payment_method" class="form-select rounded-pill px-3 py-2 bg-white" required onchange="togglePaymentSection()">
                                     <option value="">-- Pilih Metode Pembayaran --</option>
                                     <option value="CASH">Cash (Tunai)</option>
                                     <option value="QRIS">QRIS / Non-Tunai</option>
@@ -296,6 +319,24 @@
                                 <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
                                     <span class="small fw-semibold text-muted">Kembalian:</span>
                                     <span id="change-amount" class="fw-bold text-dark fs-6">Rp 0</span>
+                                </div>
+                            </div>
+
+                            <!-- Section Barcode QRIS (Muncul jika pilih QRIS) -->
+                            <div id="qris-section" class="mb-3 p-3 bg-white rounded-3 border shadow-sm text-center" style="display: none;">
+                                <div class="fw-bold text-primary mb-1">Pindai Kode QRIS</div>
+                                <p class="small text-muted mb-2">Scan QR code di bawah menggunakan aplikasi E-Wallet atau M-Banking.</p>
+                                
+                                <!-- Gambar QR Code Dinamis via API -->
+                                <div class="p-2 border rounded bg-white d-inline-block shadow-sm">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=QRIS_POS_KASIR_TOTAL_{{ $sale->total_pembayaran ?? 0 }}" 
+                                         alt="QRIS Code" 
+                                         class="img-fluid" 
+                                         style="max-width: 180px; height: auto;">
+                                </div>
+
+                                <div class="mt-2 text-muted small fw-semibold">
+                                    Total: <span class="text-primary fw-bold">Rp {{ number_format($sale->total_pembayaran ?? 0, 0, ',', '.') }}</span>
                                 </div>
                             </div>
 
@@ -326,21 +367,107 @@
     </div>
 </div>
 
-<!-- Script Logika Cash & Perhitungan Kembalian -->
+<!-- ================= MODAL SIZE CHART ================= -->
+<div class="modal fade" id="sizeChartModal" tabindex="-1" aria-labelledby="sizeChartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header bg-primary text-white rounded-top-4">
+                <h5 class="modal-title fw-bold" id="sizeChartModalLabel">
+                    <i class="bi bi-ruler me-2"></i> Panduan Ukuran Sepatu (Size Chart)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small text-muted mb-3">Gunakan tabel di bawah ini sebagai acuan panjang kaki (centimeter) untuk menentukan ukuran sepatu yang tepat.</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center align-middle mb-0">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>EU Size</th>
+                                <th>Panjang Kaki (cm)</th>
+                                <th>US Size</th>
+                                <th>UK Size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-primary">38</span></td>
+                                <td>24.0 cm</td>
+                                <td>6.0</td>
+                                <td>5.5</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">39</span></td>
+                                <td>24.5 cm</td>
+                                <td>6.5</td>
+                                <td>6.0</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">40</span></td>
+                                <td>25.0 cm</td>
+                                <td>7.5</td>
+                                <td>6.5</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">41</span></td>
+                                <td>26.0 cm</td>
+                                <td>8.5</td>
+                                <td>7.5</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">42</span></td>
+                                <td>26.5 cm</td>
+                                <td>9.0</td>
+                                <td>8.0</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">43</span></td>
+                                <td>27.5 cm</td>
+                                <td>10.0</td>
+                                <td>9.0</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">44</span></td>
+                                <td>28.0 cm</td>
+                                <td>10.5</td>
+                                <td>9.5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-0 rounded-bottom-4">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script Logika Pembayaran & Perhitungan Kembalian -->
 <script>
     const totalPembayaran = {{ $sale->total_pembayaran ?? 0 }};
 
-    function toggleCashInput() {
+    function togglePaymentSection() {
         const method = document.getElementById('payment_method').value;
         const cashSection = document.getElementById('cash-section');
+        const qrisSection = document.getElementById('qris-section');
         const paidInput = document.getElementById('paid_amount');
 
         if (method === 'CASH') {
             cashSection.style.display = 'block';
+            qrisSection.style.display = 'none';
             paidInput.setAttribute('required', 'required');
             paidInput.focus();
+        } else if (method === 'QRIS') {
+            cashSection.style.display = 'none';
+            qrisSection.style.display = 'block';
+            paidInput.removeAttribute('required');
+            paidInput.value = '';
+            hitungKembalian();
         } else {
             cashSection.style.display = 'none';
+            qrisSection.style.display = 'none';
             paidInput.removeAttribute('required');
             paidInput.value = '';
             hitungKembalian();
